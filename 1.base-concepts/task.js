@@ -9,8 +9,10 @@ function solveEquation(a, b, c) {
     const root = -b / (2 * a);
     return [root];
   } else {
-    const root1 = (-b + Math.sqrt(discriminant)) / (2 * a);
-    const root2 = (-b - Math.sqrt(discriminant)) / (2 * a);
+    const denominator = 2 * a;
+    const sqrtDiscriminant = Math.sqrt(discriminant);
+    const root1 = (-b + sqrtDiscriminant) / denominator;
+    const root2 = (-b - sqrtDiscriminant) / denominator;
     return [root1, root2];
   }
 }
@@ -22,6 +24,7 @@ const solutions3 = solveEquation(2, 1, 3);
 console.log(solutions1);
 console.log(solutions2);
 console.log(solutions3);
+
 
 function calculateTotalMortgage(percent, contribution, amount, countMonths) {
   if (
