@@ -1,39 +1,40 @@
 function cachingDecoratorNew(func) {
-  const cache = [];
+  const maxCacheSize = 5;
+  const cache = new Map();
 
-  function wrapper(...args) {
-    const hash = JSON.stringify(args);
-    const objectInCache = cache.find((item) => item.hash === hash);
+  function cachedFunction(...args) {
+    const key = JSON.stringify(args);
 
-    if (objectInCache) {
-      console.log("Из кэша: " + objectInCache.value);
-      return "Из кэша: " + objectInCache.value;
+    if (cache.has(key)) {
+      console.log("Из кеша: " + cache.get(key).value);
+      return "Из кеша: " + cache.get(key).value;
     }
 
     const result = func(...args);
-    cache.push({ hash, value: result });
+    cache.set(key, { value: result });
 
-    if (cache.length > 5) {
-      cache.shift();
+    if (cache.size > maxCacheSize) {
+      const firstKey = cache.keys().next().value;
+      cache.delete(firstKey);
     }
 
     console.log("Вычисляем: " + result);
     return "Вычисляем: " + result;
   }
 
-  return wrapper;
+  return cachedFunction;
 }
 
 const addAndMultiply = (a, b, c) => (a + b) * c;
-const upgraded = cachingDecoratorNew(addAndMultiply);
-console.log(upgraded(1, 2, 3));
-console.log(upgraded(1, 2, 3));
-console.log(upgraded(2, 2, 3));
-console.log(upgraded(3, 2, 3));
-console.log(upgraded(4, 2, 3));
-console.log(upgraded(5, 2, 3));
-console.log(upgraded(6, 2, 3));
-console.log(upgraded(1, 2, 3));
+const upgradedAddAndMultiply = cachingDecoratorNew(addAndMultiply);
+console.log(upgradedAddAndMultiply(1, 2, 3));
+console.log(upgradedAddAndMultiply(1, 2, 3));
+console.log(upgradedAddAndMultiply(2, 2, 3));
+console.log(upgradedAddAndMultiply(3, 2, 3));
+console.log(upgradedAddAndMultiply(4, 2, 3));
+console.log(upgradedAddAndMultiply(5, 2, 3));
+console.log(upgradedAddAndMultiply(6, 2, 3));
+console.log(upgradedAddAndMultiply(1, 2, 3));
 
 function debounceDecoratorNew(func, timeout) {
   let timeoutId;
